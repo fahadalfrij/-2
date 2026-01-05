@@ -1,0 +1,57 @@
+
+{
+  "name": "دوران الحكمة Pro",
+  "short_name": "الحكمة Pro",
+  "id": "com.wisdom.spin.pro.v1",
+  "description": "استمتع بتجربة مسابقات ذكية وتفاعلية مع دوران الحكمة Pro. تحديات ثقافية، أسئلة ذكاء اصطناعي، ولوحة صدارة للأساطير.",
+  "start_url": "./index.html",
+  "scope": ".",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "categories": ["games", "education", "entertainment"],
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2643/2643506.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2643/2643506.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2643/2643506.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "label": "الشاشة الرئيسية للتحدي",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2643/2643506.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "label": "تحدي الذكاء الاصطناعي",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ابدأ التحدي",
+      "url": "/",
+      "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/2643/2643506.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "لوحة الصدارة",
+      "url": "/?scores=true",
+      "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/2643/2643506.png", "sizes": "192x192" }]
+    }
+  ]
+}
