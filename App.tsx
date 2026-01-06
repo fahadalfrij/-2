@@ -22,7 +22,9 @@ const TRANSLATIONS = {
     offline: 'وضع الأوفلاين نشط',
     liveMode: 'الوضع المباشر',
     deletePlaceholder: 'اختر للحذف...',
-    deleteBtn: 'حذف 🗑️'
+    deleteBtn: 'حذف 🗑️',
+    copied: 'تم نسخ الرابط بنجاح! ✅',
+    shareText: 'انضم إليّ في تحدي دوران الحكمة! 🎡✨ لنرى من الأذكى!'
   },
   en: {
     title: 'Wisdom Spin',
@@ -39,7 +41,9 @@ const TRANSLATIONS = {
     offline: 'Offline Mode Active',
     liveMode: 'Live Mode',
     deletePlaceholder: 'Select to delete...',
-    deleteBtn: 'Delete 🗑️'
+    deleteBtn: 'Delete 🗑️',
+    copied: 'Link copied to clipboard! ✅',
+    shareText: 'Join me in the Wisdom Spin challenge! 🎡✨ Let\'s see who is smarter!'
   }
 };
 
@@ -69,6 +73,7 @@ const App: React.FC = () => {
   const [timerActive, setTimerActive] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem('wisdom_muted') === 'true');
+  const [showCopiedBadge, setShowCopiedBadge] = useState(false);
 
   const soundsRef = useRef<{ [key: string]: HTMLAudioElement }>({});
   const inputRef = useRef<HTMLInputElement>(null);
@@ -155,6 +160,27 @@ const App: React.FC = () => {
     setParticipants(prev => prev.filter(p => p.id !== participantToDeleteId));
     setParticipantToDeleteId('');
     playSound('click');
+  };
+
+  const handleShare = async () => {
+    playSound('click');
+    const shareData = {
+      title: t.title,
+      text: t.shareText,
+      url: window.location.origin + window.location.pathname,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        setShowCopiedBadge(true);
+        setTimeout(() => setShowCopiedBadge(false), 3000);
+      }
+    } catch (err) {
+      console.error('Share failed', err);
+    }
   };
 
   const spin = () => {
@@ -244,14 +270,22 @@ const App: React.FC = () => {
   return (
     <div className={`flex flex-col h-full w-full bg-slate-950 select-none overflow-hidden ${isRtl ? 'font-tajawal text-right' : 'font-sans text-left'}`}>
       
+      {/* Copied Badge Alert */}
+      {showCopiedBadge && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[200] bg-amber-500 text-slate-950 px-6 py-3 rounded-2xl font-black text-xs shadow-glow animate-fade-in">
+          {t.copied}
+        </div>
+      )}
+
       <nav className={`flex justify-between items-center px-6 pt-8 pb-1 z-20 ${isLiveMode || result || loadingQuestion ? 'hidden' : 'flex'}`}>
         <div className="flex gap-2">
           <button onClick={() => setGameStarted(false)} className="glass w-10 h-10 rounded-xl text-amber-500 flex items-center justify-center text-sm">✕</button>
-          <button onClick={toggleMute} className="glass w-10 h-10 rounded-xl text-amber-500 flex items-center justify-center text-base">
+          <button onClick={toggleMute} className="glass w-10 h-10 rounded-xl text-amber-500 flex items-center justify-center text-lg">
             {isMuted ? '🔇' : '🔊'}
           </button>
         </div>
         <div className="flex gap-2">
+          <button onClick={handleShare} className="glass w-10 h-10 rounded-xl text-amber-500 flex items-center justify-center text-base">📲</button>
           <button onClick={() => setShowScores(true)} className="glass w-10 h-10 rounded-xl text-amber-500 flex items-center justify-center text-sm">🏆</button>
           <button onClick={() => setIsLiveMode(true)} className="bg-amber-500 text-slate-950 h-10 px-4 rounded-xl font-black text-[8px] uppercase tracking-widest shadow-glow active:scale-95">🎬 {t.liveMode}</button>
         </div>
@@ -261,7 +295,6 @@ const App: React.FC = () => {
         {!isLiveMode && !result && !loadingQuestion && (
           <section className="px-5 mt-1 animate-slide-up">
             <div className="glass p-4 rounded-[1.5rem] space-y-3 shadow-lg">
-              {/* إضافة مشترك */}
               <form onSubmit={handleAddParticipant} className="flex gap-2">
                 <input 
                   ref={inputRef} type="text" value={newName} onChange={e => setNewName(e.target.value)} 
@@ -271,7 +304,6 @@ const App: React.FC = () => {
                 <button type="submit" className="w-10 h-10 bg-amber-500 text-slate-950 rounded-lg font-black text-xl flex items-center justify-center active:scale-90">+</button>
               </form>
               
-              {/* حذف مشترك وقائمة الخيارات */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex gap-1.5 overflow-hidden">
                   <select 
@@ -302,7 +334,6 @@ const App: React.FC = () => {
                 </select>
               </div>
 
-              {/* الصعوبة */}
               <div className="flex gap-1.5 h-8">
                 {DIFFICULTY_OPTIONS.map(d => (
                   <button key={d} onClick={() => setSelectedDifficulty(d)} className={`flex-1 rounded-lg text-[9px] font-black border transition-all ${selectedDifficulty === d ? 'bg-amber-500 border-amber-500 text-slate-900 shadow-glow' : 'bg-white/5 border-white/10 text-white/20'}`}>{d}</button>
